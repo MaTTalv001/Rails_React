@@ -25,15 +25,15 @@ class AnnictApiService
 
   def format_works_data(works)
     works.map do |work|
-      twitter_data = work.dig("twitter", "mini_avatar_url")
-      header_photo_url = twitter_data ? twitter_data.sub('profile_image', 'header_photo') : nil
+      #twitter_data = work.dig("twitter", "mini_avatar_url")
+      #header_photo_url = twitter_data ? twitter_data.sub('profile_image', 'header_photo') : nil
 
       {
         title: work["title"],
         title_kana: work["title_kana"],
         year: extract_year(work["season_name_text"]),
         season: extract_season(work["season_name_text"]),
-        image_url: header_photo_url.presence || work.dig("images", "facebook", "og_image_url").presence || work.dig("images", "recommended_url"),
+        image_url: work.dig("images", "recommended_url").presence || work.dig("twitter", "mini_avatar_url").presence || work.dig("twitter", "normal_avatar_url").presence || work.dig("twitter", "original_avatar_url").presence || work.dig("images", "facebook", "og_image_url").presence || "" ,
         official_site_url: work["official_site_url"],
         twitter_url: work["twitter_username"].present? ? "https://twitter.com/#{work['twitter_username']}" : nil,
         annict_id: work["id"]

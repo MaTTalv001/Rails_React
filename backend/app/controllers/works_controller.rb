@@ -10,10 +10,10 @@ class WorksController < ApplicationController
   private
 
   def year_param
-    params[:year] || 2014 # デフォルト値を設定
+    params[:year] || 2023 # デフォルト値を設定
   end
 
   def season_param
-    params[:year] || "autumn" # デフォルト値を設定
+    params[:year] || "winter" # デフォルト値を設定
   end
 end
