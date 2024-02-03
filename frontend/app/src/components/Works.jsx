@@ -14,22 +14,33 @@ const Works = () => {
     e.target.src = "/default-image.png";
   };
 
-  useEffect(() => {
-    // APIからデータを取得する関数
-    const fetchWorks = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/works'); // Railsサーバーのエンドポイントを指定
-        console.log(response.data);
-        setWorks(response.data); // 取得したデータを状態にセット
-        setIsLoading(false); // ローディング状態を解除
-      } catch (error) {
-        console.error('Error fetching data: ', error);
-        setIsLoading(false); // エラーが発生してもローディング状態を解除
-      }
+  const [page, setPage] = useState(1);
+  const fetchWorks = async (page) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/works?page=${page}`);
+    console.log(response.data);
+    setWorks(response.data);
+    setIsLoading(false);
+  } catch (error) {
+    console.error('Error fetching data: ', error);
+    setIsLoading(false);
+  }
+};
+    const handleNextPage = () => {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchWorks(nextPage);
     };
 
-    fetchWorks(); // コンポーネントがマウントされた時にデータを取得
-  }, []); // 空の依存配列を渡すことで、コンポーネントがマウントされた時にのみ実行
+    const handlePrevPage = () => {
+      const prevPage = page - 1;
+      setPage(prevPage);
+      fetchWorks(prevPage);
+    };
+
+    useEffect(() => {
+      fetchWorks(page);
+    }, [page]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -68,6 +79,11 @@ const Works = () => {
         ))}
         </div>
       </div>
+
+      <div>
+  <button onClick={handlePrevPage} disabled={page === 1}>前のページ</button>
+  <button onClick={handleNextPage}>次のページ</button>
+</div>
 
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
   

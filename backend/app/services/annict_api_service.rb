@@ -4,31 +4,21 @@ class AnnictApiService
     @access_token = ENV["ANNICT_ACCESS_TOKEN"]
   end
 
-  def fetch_anime_data(start_y)
-    start_year = start_y
-    end_year = Date.today.year
-    seasons =  ["winter", "spring", "summer", "autumn" ]
-    all_works = []
+  def fetch_anime_data(year, season, page = 2)
+    response = Faraday.get("#{@base_url}", {
+      fields: "id,title,title_kana,season_name_text,official_site_url,twitter_username,images",
+      filter_season: "#{year}-#{season}",
+      sort_season: 'desc',
+      sort_watchers_count: 'desc',
+      page: page,
+      per_page: 15,
+      access_token: @access_token
+    })
+    data = JSON.parse(response.body)
 
-    (start_year..end_year).each do |year|
-      seasons.each do |season|
-        response = Faraday.get("#{@base_url}", {
-          fields: "id,title,title_kana,season_name_text,official_site_url,twitter_username,images",
-          filter_season: "#{year}-#{season}",
-          sort_watchers_count: 'desc',
-          page: 1,
-          per_page: 25,
-          access_token: @access_token
-        })
-        data = JSON.parse(response.body)
+    return [] unless data["works"].is_a?(Array)
 
-        next unless data["works"].is_a?(Array)
-
-        all_works.concat(format_works_data(data["works"]))
-      end
-    end
-
-    all_works
+    format_works_data(data["works"])
   end
   
   private
