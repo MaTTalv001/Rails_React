@@ -19,15 +19,27 @@ const Works = () => {
 
   const [page, setPage] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const fetchWorks = async (page, searchKeyword) => {
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedSeason, setSelectedSeason] = useState('');
+  
+  // 年の選択肢を生成 (2000年から現在年まで)
+  const years = Array.from(new Array(new Date().getFullYear() - 1999), (val, index) => 2000 + index);
+  
+  // 季節の選択肢
+  const seasons = ['winter', 'spring', 'summer', 'autumn'];
+  
+  const fetchWorks = async (page, searchKeyword, search_season = null) => {
     let url = `http://localhost:3001/works?page=${page}`;
     if (searchKeyword) {
       url += `&search_keyword=${encodeURIComponent(searchKeyword)}`;
     }
-    console.log('Fetching URL:', url); 
+    // search_seasonが指定されている場合、URLに年季節を追加
+    if (search_season) {
+      url += `&filter_season=${encodeURIComponent(search_season)}`;
+    }
+    console.log('Request URL:', url); 
   try {
     const response = await axios.get(url);
-    console.log(response.data);
     setWorks(response.data);
     setIsLoading(false);
   } catch (error) {
@@ -49,10 +61,19 @@ const Works = () => {
   
   // 検索ハンドラ
   const handleSearch = () => {
-    console.log('Searching for:', searchKeyword);
-    setPage(1); // 新しい検索のためにページをリセット
+  console.log('Searching for:', searchKeyword);
+  setPage(1); // 新しい検索のためにページをリセット
+
+    // 年と季節が選択されている場合、filter_seasonを追加して検索
+    // 年と季節が選択されている場合、search_seasonを定義
+  const search_season = selectedYear && selectedSeason ? `${selectedYear}-${selectedSeason}` : null;
+    if (search_season) {
+    fetchWorks(1, searchKeyword, search_season);
+  } else {
+    // 年と季節が選択されていない場合、通常の検索を実行
     fetchWorks(1, searchKeyword);
-  };
+  }
+};
 
     useEffect(() => {
       fetchWorks(page);
@@ -86,8 +107,35 @@ const Works = () => {
             className="py-3 px-4 ps-11 block w-full border-gray-200 shadow-sm rounded-l-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
             placeholder="タイトル検索"
             value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-          />
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault(); // エンターキーのデフォルトの動作を防止
+        handleSearch();
+      }
+    }}
+            />
+            
+             {/* 年の選択 */}
+      <select
+        value={selectedYear}
+        onChange={(e) => setSelectedYear(e.target.value)}
+      >
+        {years.map(year => (
+          <option key={year} value={year}>{year}</option>
+        ))}
+      </select>
+
+      {/* 季節の選択 */}
+      <select
+        value={selectedSeason}
+        onChange={(e) => setSelectedSeason(e.target.value)}
+      >
+        {seasons.map(season => (
+          <option key={season} value={season}>{season}</option>
+        ))}
+      </select>
+        
           <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4">
             <svg className="flex-shrink-0 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </div>

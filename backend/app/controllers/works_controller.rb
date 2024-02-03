@@ -3,7 +3,12 @@ class WorksController < ApplicationController
     annict_api_service = AnnictApiService.new
     page = params[:page] || 1
     search_keyword = params[:search_keyword] || nil
-     @works = annict_api_service.fetch_anime_data(page, search_keyword)
+
+    filter_season = params[:filter_season] || nil
+
+    Rails.logger.info "filter_season from params: #{params[:filter_season]}"
+
+     @works = annict_api_service.fetch_anime_data(page, search_keyword, filter_season)
     # この@worksをReactコンポーネントに渡す
     render json: @works
   end

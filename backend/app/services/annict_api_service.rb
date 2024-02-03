@@ -4,7 +4,7 @@ class AnnictApiService
     @access_token = ENV["ANNICT_ACCESS_TOKEN"]
   end
 
-  def fetch_anime_data(page = 1, search_keyword = nil)
+  def fetch_anime_data(page = 1, search_keyword = nil,  search_season = nil)
     year, season = current_year_and_season
   params = {
     fields: "id,title,title_kana,season_name_text,official_site_url,twitter_username,images",
@@ -16,12 +16,17 @@ class AnnictApiService
   }
   
   # 検索キーワードがある場合は、フィルターに追加します
-  if search_keyword.present?
-    params[:filter_title] = search_keyword
-  else
-    # 検索キーワードがない場合、デフォルトで現在の季節をフィルターに追加します
+  params[:filter_title] = search_keyword if search_keyword.present?
+  
+  # search_seasonが指定されている場合は、フィルターに追加します
+  if search_season.present?
+    params[:filter_season] = search_season
+  elsif search_keyword.blank?
+    # search_keywordがなく、search_seasonもない場合は現在の年と季節をフィルターに追加
     params[:filter_season] = "#{year}-#{season}"
   end
+  Rails.logger.info "params: #{params}"
+
 
   response = Faraday.get("#{@base_url}", params)
   data = JSON.parse(response.body)
