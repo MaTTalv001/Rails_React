@@ -7,7 +7,7 @@ class AnnictApiService
   def fetch_anime_data(start_y)
     start_year = start_y
     end_year = Date.today.year
-    seasons = ["winter", "spring", "summer", "autumn" ]
+    seasons =  ["autumn" ] #["winter", "spring", "summer", "autumn" ]
     all_works = []
 
     (start_year..end_year).each do |year|
@@ -16,7 +16,8 @@ class AnnictApiService
           fields: "id,title,title_kana,season_name_text,official_site_url,twitter_username,images",
           filter_season: "#{year}-#{season}",
           sort_watchers_count: 'desc',
-          per_page: 50,
+          page: 1,
+          per_page: 25,
           access_token: @access_token
         })
         data = JSON.parse(response.body)
