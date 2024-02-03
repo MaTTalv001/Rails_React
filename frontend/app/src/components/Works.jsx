@@ -10,6 +10,9 @@ initTE({ Ripple });
 const Works = () => {
   const [works, setWorks] = useState([]); // アニメ作品のデータを保持するための状態
   const [isLoading, setIsLoading] = useState(true); // データ取得中かどうかの状態
+  const handleError = (e) => {
+    e.target.src = "/default-image.png";
+  };
 
   useEffect(() => {
     // APIからデータを取得する関数
@@ -34,15 +37,14 @@ const Works = () => {
 
   return (
     <div>
-      <h1>アニメ作品リスト</h1>
       <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {works.map(work => (
             <>
               <div className="group flex flex-col h-full bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]">
-                <div class="h-52 flex flex-col justify-center items-center bg-blue-600 rounded-t-xl">
-                a
-              </div>
+                <div className="h-52 flex flex-col justify-center items-center bg-blue-600 rounded-t-xl">
+                  <img src={work.image_url || '/default-image.png'} alt="Description" className="object-cover h-full w-full" onError={(e) => e.target.src = '/default-image.png'}/>
+                </div>
                 <div className="p-4 md:p-6">
                   <span className="mt-3 text-gray-500">
                     {work.year}:{work.season}

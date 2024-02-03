@@ -7,7 +7,7 @@ class AnnictApiService
   def fetch_anime_data(start_y)
     start_year = start_y
     end_year = Date.today.year
-    seasons =  ["autumn" ] #["winter", "spring", "summer", "autumn" ]
+    seasons =  ["winter", "spring", "summer", "autumn" ]
     all_works = []
 
     (start_year..end_year).each do |year|

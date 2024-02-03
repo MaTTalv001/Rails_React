@@ -9,6 +9,6 @@ class WorksController < ApplicationController
   private
 
   def start_year_param
-    params[:start_year] || 2024 # デフォルト値を設定
+    params[:start_year] || 2023 # デフォルト値を設定
   end
 end
