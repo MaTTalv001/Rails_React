@@ -2,7 +2,8 @@ class WorksController < ApplicationController
   def index
     annict_api_service = AnnictApiService.new
     page = params[:page] || 1
-    @works = annict_api_service.fetch_anime_data(year_param, season_param, page) # start_year_paramは適宜設定
+    search_keyword = params[:search_keyword] || nil
+     @works = annict_api_service.fetch_anime_data(page, search_keyword)
     # この@worksをReactコンポーネントに渡す
     render json: @works
   end
@@ -16,4 +17,6 @@ class WorksController < ApplicationController
   def season_param
     params[:year] || "winter" # デフォルト値を設定
   end
+
+  
 end
