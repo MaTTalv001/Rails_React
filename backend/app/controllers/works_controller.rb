@@ -1,15 +1,21 @@
 class WorksController < ApplicationController
   def index
     annict_api_service = AnnictApiService.new
+    annict_api_service_cast = AnnictApiServiceCast.new
+
     page = params[:page] || 1
     search_keyword = params[:search_keyword] || nil
-
     filter_season = params[:filter_season] || nil
+    @works = annict_api_service.fetch_anime_data(page, search_keyword, filter_season)
+    @casts = annict_api_service_cast.fetch_cast_data(@works)
 
-    Rails.logger.info "filter_season from params: #{params[:filter_season]}"
-
-     @works = annict_api_service.fetch_anime_data(page, search_keyword, filter_season)
-    # この@worksをReactコンポーネントに渡す
+    @works.each do |work|
+      # 対応するキャスト情報を @casts から検索し、work の :annict_id と一致する :work_id を持つキャストのみ選択
+      matching_casts = @casts.select { |cast| cast[:work_id] == work[:annict_id] }
+      # 該当するキャスト情報を work に追加
+      work[:casts] = matching_casts
+    end
+    
     render json: @works
   end
 
@@ -21,7 +27,5 @@ class WorksController < ApplicationController
 
   def season_param
     params[:year] || "winter" # デフォルト値を設定
-  end
-
-  
+  end  
 end
