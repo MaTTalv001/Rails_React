@@ -45,7 +45,7 @@ const Modal = ({ show, onClose, workDetails }) => {
               </a>
             </div>
             {/* クローズボタン */}
-            <div className="bg-gray-200 flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700">
+            <div className="bg-gray-200 flex justify-end items-center gap-x-2 py-3 px-4 border-t dark:border-gray-700 rounded-lg">
               <button onClick={onClose} className="...">
                 Close
               </button>
