@@ -48,4 +48,3 @@ end
 gem 'faraday'
 gem 'syobocal'
 gem 'dotenv-rails'
-gem 'sorcery', "0.16.3"
