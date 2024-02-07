@@ -5,8 +5,6 @@ import Works from './components/Works';
 import Header from './components/Header';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
-import { signOut } from './api/auth';
-import Cookies from "js-cookie";
 
 export const AuthContext = createContext();
 
@@ -33,35 +31,22 @@ const App = () => {
   };
 
   useEffect(() => {
-  handleGetCurrentUser();
-}, []); 
+    handleGetCurrentUser();
+  }, [setCurrentUser]);
 
-  const handleLogout = async () => {
-    try {
-    // APIを呼び出してサーバーサイドのセッションを破棄
-      await signOut();
-      // クライアントサイドでのCookieのクリア
-      Cookies.remove('_access_token');
-      Cookies.remove('_client');
-      Cookies.remove('_uid');
-
-    // ユーザーのサインイン状態をfalseに設定
-    setIsSignedIn(false);
-    // currentUserをクリア
-    setCurrentUser(null);
-    // ここで必要に応じてリダイレクト
-  } catch (error) {
-    console.error('Failed to logout', error);
-    // 必要に応じてエラーハンドリング
-  }
-};
+  const handleLogout = () => {
+    // 実際のログアウト処理をここで行う（例: APIを呼び出してセッションを破棄する）
+    setIsSignedIn(false); // ユーザーのサインイン状態をfalseに設定
+    setCurrentUser(null); // currentUserをクリア
+    // 任意で、ここでリダイレクトを行うこともできます。
+  };
 
   const Private = ({ children }) => {
     if (!loading) {
       if (isSignedIn) {
         return children;
       } else {
-        return <Redirect to="/" />;
+        return <Redirect to="signin" />;
       }
     } else {
       return <></>;
@@ -80,15 +65,20 @@ const App = () => {
       }}
     >
     <BrowserRouter>
-          <Header isSignedIn={isSignedIn} handleLogout={handleLogout} /> 
+        <Header isSignedIn={isSignedIn} handleLogout={handleLogout} />
         <Switch>
-    <Private>
-      <Route exact path="/">
-        {/* メインコンテンツ */}
-      </Route>
-    </Private>
-  </Switch>
-  <Works />
+          <Route exact path="/signin">
+            <SignIn />
+          </Route>
+          <Route exact path="/signup">
+            <SignUp />
+          </Route>
+          <Private>
+            <Route exact path="/">
+              <Works />
+            </Route>
+          </Private>
+        </Switch>
       </BrowserRouter>
     </AuthContext.Provider>
     </>
