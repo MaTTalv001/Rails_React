@@ -82,18 +82,13 @@ const App = () => {
     <BrowserRouter>
           <Header isSignedIn={isSignedIn} handleLogout={handleLogout} /> 
         <Switch>
-          <Route exact path="/signin">
-            <SignIn />
-          </Route>
-          <Route exact path="/signup">
-            <SignUp />
-          </Route>
-          <Private>
-            <Route exact path="/">
-            </Route>
-          </Private>
-          </Switch>
-        <Works />
+    <Private>
+      <Route exact path="/">
+        {/* メインコンテンツ */}
+      </Route>
+    </Private>
+  </Switch>
+  <Works />
       </BrowserRouter>
     </AuthContext.Provider>
     </>
